@@ -51,7 +51,8 @@ var attendeesMarkup = `
 	</ul>
 	<form method="get">
 		<label for="q">Search</label>
-		<input type="text" name="q" value="">
+		<input type="text" name="q" value="{{.Query}}">
+		<button type="submit">Submit</button>
 	</form>
 {{end}}
 `

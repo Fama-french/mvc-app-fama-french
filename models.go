@@ -19,4 +19,5 @@ var people = []string{
 
 type party struct {
 	Attendees []string
+	Query     string
 }

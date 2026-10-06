@@ -37,8 +37,25 @@ func attendeesHandler(w http.ResponseWriter, r *http.Request) {
 	// We're doing the same thing.  The `party` struct is
 	// defined in `models.go`. It has just one field called
 	// `Attendees`, which is an array of strings.
-	contextData := party{Attendees: people}
+	//
+	// If there is a `q` query parameter, we only keep the people
+	// whose name contains it, ignoring case.
+	query := r.URL.Query().Get("q")
+	attendees := people
+	if query != "" {
+		attendees = []string{}
+		for _, person := range people {
+			if strings.Contains(strings.ToLower(person), strings.ToLower(query)) {
+				attendees = append(attendees, person)
+			}
+		}
+	}
+	contextData := party{Attendees: attendees, Query: query}
 	attendeesTemplate.Execute(w, contextData)
+}
+
+func nicknameHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "adventurous-gerbil")
 }
 
 func getEnv(key, fallback string) string {
@@ -53,5 +70,6 @@ func main() {
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/love", loveHandler)
 	http.HandleFunc("/attendees", attendeesHandler)
+	http.HandleFunc("/nickname", nicknameHandler)
 	http.ListenAndServe(":"+getEnv("PORT", "8080"), nil)
 }
